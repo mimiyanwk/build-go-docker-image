@@ -1,0 +1,12 @@
+FROM golang:alpine as builder
+RUN mkdir -p /build
+ADD . /build/
+WORKDIR /build
+RUN go build http-server.go
+FROM alpine
+EXPOSE 8080
+RUN adduser -S -D -H -h /app appuser
+USER appuser
+COPY --from=builder /build/http-server /app/
+WORKDIR /app
+CMD ["./http-server"]
